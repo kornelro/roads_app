@@ -4,6 +4,7 @@ import { Map } from 'leaflet'
 import { IEdge, Type } from '../Interfaces/IEdge'
 import { Edge } from '../Graph/Edge'
 import { resources } from '../Resources'
+import { writeHeapSnapshot } from 'v8'
 var L = require('leaflet')
 
 
@@ -11,20 +12,10 @@ export class Controller implements IController {
     dataEdges: Promise<typeof DataFrame>
     edges: IEdge[]
     map: Map
+    sum: number
+    _sumElement: HTMLElement
 
     constructor() {
-        // let target_nodes = document.getElementById('dragdrop_nodes');
-        // let fileInput_nodes = document.getElementById("fileinput_nodes");
-        // target_nodes.addEventListener('click', () => {
-        //     fileInput_nodes.click()
-        // });
-        // fileInput_nodes.onchange = () => {
-        //     var x = document.getElementById("fileinput_nodes") as HTMLInputElement;
-        //     if (x['files']['length'] != 1) {
-        //         var file = x['files'][0]
-        //         this.readData(file, ',')
-        //     }
-        // };
         let target_edges = document.getElementById('dragdrop_edges');
         let fileInput_edges = document.getElementById("fileinput_edges");
         target_edges.addEventListener('click', () => {
@@ -49,6 +40,10 @@ export class Controller implements IController {
             attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
             maxZoom: 18
         }).addTo(this.map)
+
+        this.sum = 0
+        this._sumElement = document.getElementById('sum')
+        this._updateSum()
     }
 
     readDataEdges(file: File, separator: string) {
@@ -61,10 +56,15 @@ export class Controller implements IController {
                     parseFloat(row.get('x1')),
                     parseFloat(row.get('y2')),
                     parseFloat(row.get('x2')),
+                    parseFloat(row.get('dist')),
                     parseInt(row.get('type'))
                 )
                 this.edges.push(edge)
+                if (edge.type == Type.NewBike) {
+                    this.sum += edge.dist
+                }
             })
+            this._updateSum()
         })
         .then(() => {
             this.drawEdges()
@@ -105,6 +105,8 @@ export class Controller implements IController {
                         dashArray: resources.lineStyle.road.dashArray,
                         dashOffset: resources.lineStyle.road.dashOffset
                     })
+                    this.sum -= edge.dist
+                    this._updateSum()
                 } else if (edge.type == Type.Road) {
                     edge.type = Type.NewBike
                     e.target.setStyle({
@@ -113,8 +115,14 @@ export class Controller implements IController {
                         dashArray: resources.lineStyle.newBike.dashArray,
                         dashOffset: resources.lineStyle.newBike.dashOffset
                     })
+                    this.sum += edge.dist
+                    this._updateSum()
                 }
             })
         })
+    }
+
+    _updateSum() {
+        this._sumElement.innerHTML = this.sum.toString()
     }
 }

@@ -2,8 +2,9 @@ import { INode } from './INode'
 
 export interface IEdge {
     id: number
-    n1: INode,
-    n2: INode,
+    n1: INode
+    n2: INode
+    dist: number
     type: Type
 }
 
