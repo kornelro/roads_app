@@ -1,4 +1,21 @@
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
 #map {
-    height: 700px;
-    width: 700px;
+    width: 100%;
+    height: 100%;
+}
+
+#menu {
+    position: fixed;
+    z-index: 1000;
+    bottom: 0;
+    right: 0;
+    background-color: #90EE02;
+    width: 200px;
+    height: 300px;
+    opacity: 0.7;
+    border-radius: 3%;
 }
