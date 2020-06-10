@@ -1,8 +1,9 @@
 import { IController } from '../Interfaces/IController'
 import { DataFrame } from 'dataframe-js'
 import { Map } from 'leaflet'
-import { IEdge } from '../Interfaces/IEdge'
+import { IEdge, Type } from '../Interfaces/IEdge'
 import { Edge } from '../Graph/Edge'
+import { resources } from '../Resources'
 var L = require('leaflet')
 
 
@@ -72,7 +73,48 @@ export class Controller implements IController {
 
     drawEdges() {
         this.edges.forEach(edge => {
-            L.polyline([[edge.n1.x, edge.n1.y], [edge.n2.x, edge.n2.y]]).addTo(this.map)
+            var color = resources.lineStyle.bike.color
+            var opacity = resources.lineStyle.bike.opacity
+            var dashArray = null
+            var dashOffset = null
+            if (edge.type == Type.NewBike) {
+                color = resources.lineStyle.newBike.color
+            } else if (edge.type == Type.Road) {
+                color = resources.lineStyle.road.color
+                opacity = resources.lineStyle.road.opacity
+                dashArray = resources.lineStyle.road.dashArray
+                dashOffset = resources.lineStyle.road.dashOffset
+            }
+
+            L.polyline(
+                [[edge.n1.x, edge.n1.y], [edge.n2.x, edge.n2.y]],
+                {
+                    color: color,
+                    opacity: opacity,
+                    dashArray: dashArray,
+                    dashOffset: dashOffset
+                }
+            )
+            .addTo(this.map)
+            .on('click', (e: any) => {
+                if (edge.type == Type.NewBike) {
+                    edge.type = Type.Road
+                    e.target.setStyle({
+                        color: resources.lineStyle.road.color,
+                        opacity: resources.lineStyle.road.opacity,
+                        dashArray: resources.lineStyle.road.dashArray,
+                        dashOffset: resources.lineStyle.road.dashOffset
+                    })
+                } else if (edge.type == Type.Road) {
+                    edge.type = Type.NewBike
+                    e.target.setStyle({
+                        color: resources.lineStyle.newBike.color,
+                        opacity: resources.lineStyle.newBike.opacity,
+                        dashArray: resources.lineStyle.newBike.dashArray,
+                        dashOffset: resources.lineStyle.newBike.dashOffset
+                    })
+                }
+            })
         })
     }
 }
