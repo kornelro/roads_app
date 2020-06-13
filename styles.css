@@ -8,14 +8,21 @@ html, body {
     height: 100%;
 }
 
-#menu {
+#dragdrop_edges {
     position: fixed;
     z-index: 1000;
-    bottom: 0;
-    right: 0;
-    background-color: #90EE02;
-    width: 200px;
-    height: 300px;
-    opacity: 0.7;
-    border-radius: 3%;
+    bottom: -30px;
+    right: 10px;
+    opacity: 1;
+    cursor: pointer;
+}
+
+#sum {
+    position: fixed;
+    z-index: 1000;
+    bottom: 100px;
+    right: 10px;
+    opacity: 1;
+    font-weight: bold;
+    font-size: 120%;
 }

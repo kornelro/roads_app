@@ -123,6 +123,6 @@ export class Controller implements IController {
     }
 
     _updateSum() {
-        this._sumElement.innerHTML = this.sum.toString()
+        this._sumElement.innerHTML = this.sum.toFixed(3).toString()+' km'
     }
 }
