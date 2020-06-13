@@ -6,7 +6,7 @@ export var resources = {
         },
         road: {
             color: 'blue',
-            opacity: 0.5,
+            opacity: 0.3,
             dashArray: '20, 20',
             dashOffset: '20'
         },
